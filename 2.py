@@ -13,6 +13,7 @@ Returns
 — int: the number of squares the queen can attack
 """
 from typing import List,Optional
+import numpy as np
 
 class Queen:
     def __init__(self,n:int,r_q:int,c_q:int,obstacles:Optional[List[List[int]]]= None) -> None:
@@ -105,15 +106,34 @@ class Queen:
         self.get_downleft_values()
         self.possible_moves = self.ups + self.downs + self.rights + self.lefts + self.uprights + self.uplefts +self.downlefts+self.downrights
 
+    def convert_position(self,pos:List[int]) -> List[int]:
+        pos[0] = abs(pos[0] - self.n)
+        pos[1] = pos[1] - 1
+        return pos
+
     def print_table(self) -> None:
-        pass
+        board = np.zeros((self.n,self.n),dtype=np.int64)
+        #queen position
+        qp = self.convert_position([self.r_q,self.c_q])
+        board[qp[0],qp[1]] = 9
+        #obstacles
+        for o in self.obstacles:
+           pos = self.convert_position(o) 
+           board[pos[0],pos[1]] = 2
+        #possible moves
+        for p in self.possible_moves:
+           pos = self.convert_position(p) 
+           board[pos[0],pos[1]] = 1 
+        print(board)
 
     @property
     def all_possible_moves(self) -> int:
         return len(self.possible_moves)
 
-q = Queen(8,4,4,[[3,5],[7,7]])
+q = Queen(8,5,5,[[3,5],[7,7]])
 q.init_values()
-print(q.all_possible_moves)
+q.print_table()
+print("Number of possible moves: ",q.all_possible_moves)
+
 
 
